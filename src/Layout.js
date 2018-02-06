@@ -101,19 +101,20 @@ class Layout extends Component {
     let newWidth = event.rect.width;
     let toTheRight = true;
     let update = false;
-    if (event.deltaRect.left !== 0) { // move left edge
-      x += event.deltaRect.left;
+
+    if (event.edges.left) { // move left edge
+      x += event.dx;
       range.max -= thisZone.minWidth;
       if (x < range.min) { x = range.min }
       if (x > range.max) { x = range.max }
       if (x !== thisZone.offset) {
         newWidth = thisZone.width + thisZone.offset - x;
         if (newWidth < thisZone.minWidth) { newWidth = thisZone.minWidth }
-        toTheRight = (event.deltaRect.left > 0);
+        toTheRight = true;
         update = true;
       }
     }
-    else if (event.deltaRect.right !== 0) { // move right edge
+    else if (event.edges.right) { // move right edge
       let right = x + event.rect.width;
       range.min += thisZone.minWidth;
       if (right < range.min) { right = range.min }
@@ -123,7 +124,13 @@ class Layout extends Component {
       if (newWidth === thisZone.minWidth) { x += event.dx };
 
       toTheRight = (event.deltaRect.right > 0);
-      update = (x !== thisZone.offset || newWidth !== thisZone.width);
+
+      let lastZoneOffset = 0;
+      if (zoneidx > 0) {
+        const lastZone = this.state.activeZones[zoneidx - 1];
+        lastZoneOffset = lastZone.offset + lastZone.width;
+      }
+      update = (x !== lastZoneOffset || newWidth !== thisZone.width);
     }
     if (update) {
       activeZones[zoneidx].width = newWidth;
