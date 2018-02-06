@@ -96,6 +96,7 @@ class Layout extends Component {
 
     let thisZone = this.state.activeZones[zoneidx];
     let x = thisZone.offset;
+
     let activeZones = _.cloneDeep(this.state.activeZones);
     let newWidth = event.rect.width;
     let toTheRight = true;
@@ -119,7 +120,8 @@ class Layout extends Component {
       if (right > range.max) { right = range.max }
       newWidth = right - x;
       if (newWidth < thisZone.minWidth) { newWidth = thisZone.minWidth }
-      x = right - newWidth;
+      if (newWidth === thisZone.minWidth) { x += event.dx };
+
       toTheRight = (event.deltaRect.right > 0);
       update = (x !== thisZone.offset || newWidth !== thisZone.width);
     }
